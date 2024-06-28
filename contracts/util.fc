@@ -1,0 +1,31 @@
+int parse_work_addr(slice cs) {
+      (int sender_wc, slice sender_addr) = parse_var_addr(cs);
+    ;; checking if is an address from the Basechain only
+    ;; to learn more about this check out the official doc here
+    ;; https://docs.ton.org/learn/overviews/ton-blockchain
+    throw_unless(err::invalid_address(), 0 == sender_wc);
+    return sender_addr~load_uint(256);
+}
+
+(slice) serialize_work_addr(int addr) {
+    return (begin_cell()
+     .store_uint(2, 2)  ;; Is std address
+     .store_uint(0, 1)  ;; Non-unicast
+     .store_uint(0, 8)  ;; Basic workchain
+     .store_uint(addr, 256) ;; Address hash
+    ).end_cell().begin_parse();
+}
+
+(cell) serialize_work_addr_cell(int addr)
+{
+    return (begin_cell()
+     .store_uint(2, 2)  ;; Is std address
+     .store_uint(0, 1)  ;; Non-unicast
+     .store_uint(0, 8)  ;; Basic workchain
+     .store_uint(addr, 256) ;; Address hash
+    ).end_cell();
+}
+
+() simple_transfer(slice receiver, int ton_amount) impure {
+    send_raw_message(begin_cell().store_uint(0x18, 6).store_slice(receiver).store_coins(ton_amount).store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1).end_cell(), 1);
+}

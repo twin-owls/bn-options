@@ -1,0 +1,44 @@
+;; check th option ledger id is valid or not
+() check_option_ledger_id(int option_ledger_id) impure {   
+    if(ctx_option_ledger_id == 0) {
+        throw(err::invalid_option_ledger());
+    }
+
+    if (option_ledger_id != ctx_option_ledger_id) {
+        throw(err::invalid_option_ledger());
+    }
+}
+
+;; check if the user store is empty or not
+() check_init_ctx_users() {
+    if(ctx_users.dict_empty?()){
+        ctx_users = new_dict();
+    }
+
+    if(ctx_awaiting_users.dict_empty?()){
+        ctx_awaiting_users = new_dict();
+    }
+}
+
+;; check the minimum amount which user can bet
+() check_minimum_bet_amount(int msg_value){
+    if(msg_value < 100000000) {
+        throw(err::minimun_bet_amount());
+    }
+}
+
+;; check if the invoker is admin user/address
+() check_admin_user(int address) impure {
+    var admin_address = parse_work_addr(ctx_admin_address); 
+    if (address != admin_address) {
+        throw(err::invalid_admin());
+    }
+}
+
+;; check if the invoker is fee collector user/address
+() check_fee_collector(int address) impure {
+    var fee_collector_address = parse_work_addr(ctx_fee_collector_address); 
+    if (address != fee_collector_address) {
+        throw(err::invalid_fee_collector());
+    }
+}

@@ -1,0 +1,38 @@
+global int ctx_id; ;; state variable
+global int ctx_option_ledger_id; ;; state variable
+global slice ctx_admin_address; ;; state variable
+global slice ctx_fee_collector_address;
+global cell ctx_users; ;; state variable
+global cell ctx_awaiting_users; ;; state variable
+
+global int ctx_user_id; ;; sender address
+global int ctx_user_option_ledger_id; ;; used in get methods
+global int ctx_user_option_type_string; ;; used in get methods
+global int ctx_user_option_type_id; ;; used in get methods
+global int ctx_user_option_amount; ;; used in get methods
+
+;; load_data populates storage variables using stored data
+() load_data() impure {
+    var ds = get_data().begin_parse();
+    ctx_id = ds~load_uint(32);
+    ctx_option_ledger_id = ds~load_uint(256);
+    ctx_admin_address = ds~load_msg_addr();
+    ctx_fee_collector_address = ds~load_msg_addr();
+    ctx_users = ds~load_dict();  
+    ctx_awaiting_users = ds~load_dict(); 
+    ds.end_parse();
+}
+
+;; save_data stores storage variables as a cell into persistent storage
+() save_data() impure {
+    set_data(
+        begin_cell()
+            .store_uint(ctx_id, 32)
+            .store_uint(ctx_option_ledger_id, 256)        
+            .store_slice(ctx_admin_address)  
+            .store_slice(ctx_fee_collector_address)
+            .store_dict(ctx_users)
+            .store_dict(ctx_awaiting_users)
+            .end_cell()
+    );
+}

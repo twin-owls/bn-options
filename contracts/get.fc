@@ -1,0 +1,154 @@
+(int) get_total_users_count() method_id {
+    load_data();
+    ;; iterate through all users and sum their amounts
+    var total_count = 0;
+    var id = -1;
+    do {
+        (id, var ds, var f) = ctx_users.udict_get_next?(256, id);        
+        if (f) {                          
+            var (user, found) = ctx_users.udict_get_ref?(256, id);
+            if(found)
+            { 
+                var ds = user.begin_parse();             
+                ctx_user_option_type_id = ds~load_uint(32);           
+                ctx_user_option_amount = ds~load_coins();
+                ctx_user_option_ledger_id = ds~load_uint(256);
+                ds.end_parse();
+                total_count += 1;
+            }            
+        }
+    } until (~ f);
+    return total_count;
+}
+
+(int) get_total_users_amount() method_id {
+    load_data();
+    ;; iterate through all users and sum their amounts
+    var total = 0;
+    var id = -1;
+    do {
+        (id, var ds, var f) = ctx_users.udict_get_next?(256, id);        
+        if (f) {                          
+            var (user, found) = ctx_users.udict_get_ref?(256, id);
+            if(found)
+            {
+                var ds = user.begin_parse();             
+                ctx_user_option_type_id = ds~load_uint(32);           
+                ctx_user_option_amount = ds~load_coins();
+                ctx_user_option_ledger_id = ds~load_uint(256);
+                ds.end_parse();
+                total += ctx_user_option_amount;
+            }            
+        }
+    } until (~ f);
+    return total;
+}
+
+
+int get_id() method_id {
+    load_data();
+    return ctx_id;
+}
+
+int get_option_ledger_id() method_id {
+    load_data();
+    return ctx_option_ledger_id;
+}
+
+(slice) get_admin() method_id {
+    load_data();
+    return ctx_admin_address;
+}
+
+(slice) get_fee_collector() method_id {
+    load_data();
+    return ctx_fee_collector_address;
+}
+
+
+(int, int, int) get_user(slice address) method_id {
+    load_data();
+    ctx_user_id = parse_work_addr(address);
+    var (user, found) = ctx_users.udict_get_ref?(256, ctx_user_id);
+    if(found)
+    {
+        var ds = user.begin_parse();
+        ctx_user_option_type_id = ds~load_uint(32);
+        ctx_user_option_amount = ds~load_coins();
+        ctx_user_option_ledger_id = ds~load_uint(256);
+        ds.end_parse();
+    }
+    else {        
+        ctx_user_option_type_id = 0;
+        ctx_user_option_amount = 0;
+        ctx_user_option_ledger_id = 0;
+    }
+ 
+    return (ctx_user_option_ledger_id, ctx_user_option_type_id, ctx_user_option_amount); 
+}
+
+(int, int, int) get_awaiting_user(slice address) method_id {
+    load_data();
+    ctx_user_id = parse_work_addr(address);
+    var (user, found) = ctx_awaiting_users.udict_get_ref?(256, ctx_user_id);
+    if(found)
+    {
+        var ds = user.begin_parse();
+        ctx_user_option_type_id = ds~load_uint(32);
+        ctx_user_option_amount = ds~load_coins();
+        ctx_user_option_ledger_id = ds~load_uint(256);
+        ds.end_parse();
+    }
+    else {        
+        ctx_user_option_type_id = 0;
+        ctx_user_option_amount = 0;
+        ctx_user_option_ledger_id = 0;
+    } 
+    return (ctx_user_option_ledger_id, ctx_user_option_type_id, ctx_user_option_amount); 
+}
+
+_ get_users() method_id {
+    load_data();
+    var list = nil;    
+    var id = -1;
+    do {
+        (id, var ds, var f) = ctx_users.udict_get_next?(256, id);        
+        if (f) {                          
+            var (user, found) = ctx_users.udict_get_ref?(256, id);
+            if(found)
+            {
+                var ds = user.begin_parse();             
+                ctx_user_option_type_id = ds~load_uint(32);           
+                ctx_user_option_amount = ds~load_coins();
+                ctx_user_option_ledger_id = ds~load_uint(256);
+                ds.end_parse();
+                list = cons([serialize_work_addr_cell(id), ctx_user_option_ledger_id, ctx_user_option_type_id, ctx_user_option_amount], list);            
+            }             
+        }
+    } until (~ f);
+    return list;
+}
+
+_ get_awaiting_users() method_id {
+    load_data();
+    var list = nil;   
+    ;; Iterate all users
+    var id = -1;
+    do {
+        (id, var ds, var f) = ctx_awaiting_users.udict_get_next?(256, id);        
+        if (f) {                          
+            var (user, found) = ctx_awaiting_users.udict_get_ref?(256, id);
+            if(found)
+            {
+                var ds = user.begin_parse();             
+                ctx_user_option_type_id = ds~load_uint(32);           
+                ctx_user_option_amount = ds~load_coins();
+                ctx_user_option_ledger_id = ds~load_uint(256);
+                ds.end_parse();
+                list = cons([serialize_work_addr_cell(id), ctx_user_option_ledger_id, ctx_user_option_type_id, ctx_user_option_amount], list);            
+            }          
+        }
+    } until (~ f);
+    return list;
+}
+

@@ -1,0 +1,7 @@
+
+;; Invoke Methods
+int op::place_call_order() asm "100 PUSHINT";
+int op::place_put_order() asm "101 PUSHINT";
+int op::process_order() asm "102 PUSHINT";
+int op::start_option_ledger() asm "103 PUSHINT";
+int op::withdraw_outstanding_amount() asm "104 PUSHINT";

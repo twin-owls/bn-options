@@ -1,0 +1,14 @@
+;; id is required to be able to create different instances of counters
+;; since addresses in TON depend on the initial state of the contract
+;; Errors 
+int err::invalid_msg() asm "401 PUSHINT";
+int err::invalid_address() asm "402 PUSHINT";
+int err::invalid_option_ledger() asm "403 PUSHINT";
+int err::invalid_process_order_id() asm "404 PUSHINT";
+int err::option_ledger_not_started() asm "405 PUSHINT";
+int err::option_already_exist() asm "406 PUSHINT";
+int err::invalid_admin() asm "407 PUSHINT";
+int err::not_enough_ton() asm "408 PUSHINT";
+int err::empty_ledger() asm "409 PUSHINT";
+int err::minimun_bet_amount() asm "410 PUSHINT";
+int err::invalid_fee_collector() asm "411 PUSHINT";
